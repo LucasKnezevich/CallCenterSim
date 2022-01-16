@@ -6,24 +6,28 @@ import java.util.Scanner;
 public class Simulation {
 
     public static void main (String[] args) throws FileNotFoundException {
-
-        ArrayList<Tech> techs = getTechs("techData_1.csv");
-        for (Tech tech : techs) {
-            System.out.println(tech);
-        }
-
-        ArrayList<Customer> custs = getCusts("custData_1.csv");
-        for (Customer cust : custs) {
-            System.out.println(cust);
-        }
-
+        Simulation sim = new Simulation();
     }
+
+    private ArrayList<Tech> techs;
+    private ArrayList<Customer> custs;
+    /**
+     * Constructor for Simulation.
+     *
+     * @throws FileNotFoundException    When a data file isn't found.
+     */
+    public Simulation() throws FileNotFoundException {
+        techs = getTechs("techData_1.csv");
+        custs = getCusts("custData_1.csv");
+    }
+
 
     /**
      * Method for retrieving technician data from a comma delimited file.
-     * @param fileName      The file with data.0
-     * @return              The ArrayList of tech data.
-     * @throws FileNotFoundException
+     *
+     * @param fileName                  The file containing technician data.
+     * @return                          The ArrayList of Techs.
+     * @throws FileNotFoundException    When the data file isn't found.
      */
     private static ArrayList<Tech> getTechs(String fileName) throws FileNotFoundException {
         ArrayList<Tech> techList = new ArrayList<>();
@@ -42,9 +46,10 @@ public class Simulation {
 
     /**
      * Method for retrieving customer data from a comma delimited file.
-     * @param fileName
-     * @return
-     * @throws FileNotFoundException
+     *
+     * @param fileName                  The file containing customer data.
+     * @return                          The ArrayList of Customers.
+     * @throws FileNotFoundException    When the data file isn't found.
      */
     private static ArrayList<Customer> getCusts(String fileName) throws FileNotFoundException {
         ArrayList<Customer> custList = new ArrayList<>();
