@@ -3,14 +3,32 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Represents a call center simulation.
+ *
+ * @author      Lucas Knezevich
+ * @version     20220120
+ */
 public class Simulation {
 
     public static void main (String[] args) throws FileNotFoundException {
         Simulation sim = new Simulation();
+        System.out.println("Number of technicians: " + sim.techs.size());
+        System.out.println("Number of customers: " + sim.custs.size());
+
     }
 
-    private ArrayList<Tech> techs;
-    private ArrayList<Customer> custs;
+    /**
+     *  Technicians
+     */
+    private final ArrayList<Tech> techs;
+
+    /**
+     *  Customers
+     */
+    private final ArrayList<Customer> custs;
+
+
     /**
      * Constructor for Simulation.
      *
