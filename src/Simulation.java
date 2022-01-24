@@ -7,7 +7,6 @@ import java.util.Scanner;
  * Represents a call center simulation.
  *
  * @author      Lucas Knezevich
- * @version     20220120
  */
 public class Simulation {
 
@@ -15,7 +14,6 @@ public class Simulation {
         Simulation sim = new Simulation();
         System.out.println("Number of technicians: " + sim.techs.size());
         System.out.println("Number of customers: " + sim.custs.size());
-
     }
 
     /**
@@ -31,8 +29,6 @@ public class Simulation {
 
     /**
      * Constructor for Simulation.
-     *
-     * @throws FileNotFoundException    When a data file isn't found.
      */
     public Simulation() throws FileNotFoundException {
         techs = getTechs("techData_1.csv");
@@ -43,9 +39,8 @@ public class Simulation {
     /**
      * Method for retrieving technician data from a comma delimited file.
      *
-     * @param fileName                  The file containing technician data.
-     * @return                          The ArrayList of Techs.
-     * @throws FileNotFoundException    When the data file isn't found.
+     * @param fileName                  File containing technician data.
+     * @return                          ArrayList of Techs.
      */
     private static ArrayList<Tech> getTechs(String fileName) throws FileNotFoundException {
         ArrayList<Tech> techList = new ArrayList<>();
@@ -67,7 +62,6 @@ public class Simulation {
      *
      * @param fileName                  The file containing customer data.
      * @return                          The ArrayList of Customers.
-     * @throws FileNotFoundException    When the data file isn't found.
      */
     private static ArrayList<Customer> getCusts(String fileName) throws FileNotFoundException {
         ArrayList<Customer> custList = new ArrayList<>();
