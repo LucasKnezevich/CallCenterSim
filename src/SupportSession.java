@@ -1,8 +1,15 @@
+/**
+ * Support session record.
+ * @param tech      Tech in the support session
+ * @param customer  Customer in the support session
+ */
 public record SupportSession(Tech tech, Customer customer) {
 
-    public static String toString(Tech tech, Customer customer) {
+    @Override
+    public String toString() {
         return tech.firstName() + " " +  tech.lastName() + " (#" + tech.number() + ") helped " + customer.firstName()
                 + " " + customer.lastName() + " (#" + customer.number() + ")";
     }
+
 
 }
