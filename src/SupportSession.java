@@ -7,8 +7,8 @@ public record SupportSession(Tech tech, Customer customer) {
 
     @Override
     public String toString() {
-        return tech.firstName() + " " +  tech.lastName() + " (#" + tech.number() + ") helped " + customer.firstName()
-                + " " + customer.lastName() + " (#" + customer.number() + ")";
+        return String.format(tech.firstName() + " " +  tech.lastName() + " (#" + tech.number()
+                + ") helped " + customer.firstName() + " " + customer.lastName() + " (#" + customer.number() + ")");
     }
 
 
