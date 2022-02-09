@@ -90,7 +90,7 @@ public class Customer {
      * @param firstName     The customer's first name
      */
     public void setFirstName(String firstName) {
-        if (firstName == null || firstName == "") {
+        if (firstName == null || firstName.isEmpty()) {
             throw new IllegalArgumentException("First name cannot be blank or null.");
         }
         this.firstName = firstName;
@@ -101,7 +101,7 @@ public class Customer {
      * @param lastName      The customer's last name
      */
     public void setLastName(String lastName) {
-        if (lastName == null || lastName == "") {
+        if (lastName == null || lastName.isEmpty()) {
             throw new IllegalArgumentException("Last name cannot be blank or null.");
         }
         this.lastName = lastName;

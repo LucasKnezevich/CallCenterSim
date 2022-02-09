@@ -101,20 +101,14 @@ public class Simulation {
         // Fill the HashSets and Queues
         while (techHash.size() < techCount) {
             int techNum = (int)Math.floor(Math.random() * techs.size());
-            int techHashSize = techHash.size();
             techHash.add(techs.get(techNum));
-            if (techHashSize < techHash.size()) {
-                techQueue.add(techs.get(techNum));
-            }
+            techQueue.add(techs.get(techNum));
         }
 
         while (custHash.size() < custCount) {
             int custNum = (int)Math.floor(Math.random() * custs.size());
-            int custHashSize = custHash.size();
             custHash.add(custs.get(custNum));
-            if (custHashSize < custHash.size()) {
-                custQueue.add(custs.get(custNum));
-            }
+            custQueue.add(custs.get(custNum));
         }
 
         while (techQueue.size() > 0 && custQueue.size() > 0) {

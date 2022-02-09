@@ -75,7 +75,7 @@ public class Tech {
      * @param firstName     The new first name; must not be null or empty
      */
     public void setFirstName(String firstName) {
-        if (firstName == null || firstName == "") {
+        if (firstName == null || firstName.isEmpty()) {
             throw new IllegalArgumentException("First name cannot be blank or null.");
         }
         this.firstName = firstName;
@@ -86,7 +86,7 @@ public class Tech {
      * @param lastName      The new last name; must not be null or empty
      */
     public void setLastName(String lastName) {
-        if (lastName == null || lastName == "") {
+        if (lastName == null || lastName.isEmpty()) {
             throw new IllegalArgumentException("Last name cannot be blank or null.");
         }
         this.lastName = lastName;
