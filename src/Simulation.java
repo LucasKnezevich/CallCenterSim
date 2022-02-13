@@ -1,10 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Scanner;
-import java.util.HashSet;
+import java.util.*;
 
 /**
  * Represents a call center simulation.
@@ -45,7 +41,7 @@ public class Simulation {
     /**
      * Queue of support sessions.
      */
-    private final static Queue<SupportSession> supportSessionQueue = new LinkedList<>();
+    private final static Queue<SupportSession> supportPQ = new LinkedList<>();
 
 
     /**
@@ -53,8 +49,9 @@ public class Simulation {
      * @param args      The command line arguments.
      */
     public static void main(String[] args){
-        Simulation sim = new Simulation(15, 30, "techData_1.csv", "custData_1.csv");
-        run(10);
+        Simulation sim = new Simulation(30, 45, "techData_1.csv", "custData_1.csv",
+                2, 42);
+        run(30);
     }
 
 
@@ -65,7 +62,9 @@ public class Simulation {
      * @param techFile          File containing tech data.  Should be a comma delimited file.
      * @param custFile          File containing cust data.  Should be a comma delimited file.
      */
-    public Simulation(int techCount, int custCount, String techFile, String custFile){
+    public Simulation(int techCount, int custCount, String techFile, String custFile, int minCallTime, int maxCallTime){
+
+        Random rand = new Random();
 
         try {
             Scanner scan = new Scanner(new File(techFile));
@@ -100,20 +99,25 @@ public class Simulation {
 
         // Fill the HashSets and Queues
         while (techHash.size() < techCount) {
-            int techNum = (int)Math.floor(Math.random() * techs.size());
-            techHash.add(techs.get(techNum));
-            techQueue.add(techs.get(techNum));
+            int techNum = rand.nextInt(techs.size());
+            if (!techHash.contains(techs.get(techNum))) {
+                techHash.add(techs.get(techNum));
+                techQueue.add(techs.get(techNum));
+            }
         }
 
         while (custHash.size() < custCount) {
-            int custNum = (int)Math.floor(Math.random() * custs.size());
-            custHash.add(custs.get(custNum));
-            custQueue.add(custs.get(custNum));
+            int custNum = rand.nextInt(custs.size());
+            if (!custHash.contains(custs.get(custNum))) {
+                custHash.add(custs.get(custNum));
+                custQueue.add(custs.get(custNum));
+            }
         }
 
         while (techQueue.size() > 0 && custQueue.size() > 0) {
-            SupportSession sesh = new SupportSession(techQueue.remove(), custQueue.remove());
-            supportSessionQueue.add(sesh);
+            SupportSession sesh = new SupportSession(techQueue.remove(), custQueue.remove(),
+                    rand.nextInt(maxCallTime - minCallTime) + minCallTime);
+            supportPQ.add(sesh);
         }
 
     }
@@ -124,33 +128,38 @@ public class Simulation {
      * @param sessionsEnding        The number of support sessions ending.
      */
     public static void run(int sessionsEnding){
-        for (int i = 0; i < sessionsEnding; i++) {
-            if (!supportSessionQueue.isEmpty()) {
-                Tech tech = supportSessionQueue.peek().tech();
-                Customer cust = supportSessionQueue.peek().customer();
+        Random rand = new Random();
+        int counter = 0;
 
-                /*
-                    Note to self:
-                    Seems like maybe tech & cust should be removed from queue in Simulation when they are put in to a
-                    support session since they are no longer waiting for a support session.  However, this could
-                    lead to issues where the hashsets are out of sync with the queues, so they would need to be removed
-                    from the hashsets too.  But then the same customer/tech could go back into the hashsets/queues while
-                    they are in a support session...
-                 */
-                techQueue.remove(tech);  // Leaving in hashset since it is unordered, and same tech going back into queue
+//        while (!supportPQ.isEmpty()) {
+//            if () {
+//
+//            }
+//
+//            counter++;
+//        }
+
+
+        for (int i = 0; i < sessionsEnding; i++) {
+            if (!supportPQ.isEmpty()) {
+                SupportSession sesh = supportPQ.remove();
+                Tech tech = sesh.tech();
+                Customer cust = sesh.customer();
+
+                // Leaving in tech hashset since it is unordered, and same tech going back into queue...
+                techQueue.remove(tech);
+                techQueue.add(tech);
+
                 custQueue.remove(cust);
                 custHash.remove(cust);
 
-                SupportSession sesh = supportSessionQueue.remove();
                 System.out.println("Call ended: " + sesh.toString());
-
-                techQueue.add(tech);
 
                 int desiredCustCount = custHash.size() + 1;
                 while (desiredCustCount > custHash.size()) {
-                    int custNum = (int) Math.floor(Math.random() * custs.size());
-                    custHash.add((custs.get(custNum)));
-                    if (desiredCustCount == custHash.size()) {
+                    int custNum = rand.nextInt(custs.size());
+                    if (!custHash.contains(custs.get(custNum))) {
+                        custHash.add((custs.get(custNum)));
                         custQueue.add(custs.get(custNum));
                     }
                 }
@@ -161,7 +170,11 @@ public class Simulation {
             } catch (InterruptedException e) {
                 // Doesn't matter
             }
+
+            counter++;
         }
+        System.out.println();
+        System.out.println("Time passed: " + counter + " minutes");
     }
 
 }
