@@ -41,7 +41,7 @@ public class Simulation {
     /**
      * Queue of support sessions.
      */
-    private final static Queue<SupportSession> supportPQ = new LinkedList<>();
+    private final static PriorityQueue<SupportSession> supportPQ = new PriorityQueue<>();
 
 
     /**
@@ -116,10 +116,9 @@ public class Simulation {
 
         while (techQueue.size() > 0 && custQueue.size() > 0) {
             SupportSession sesh = new SupportSession(techQueue.remove(), custQueue.remove(),
-                    rand.nextInt(maxCallTime - minCallTime) + minCallTime);
+                    rand.nextInt((maxCallTime + 1) - minCallTime) + minCallTime);
             supportPQ.add(sesh);
         }
-
     }
 
 
@@ -131,31 +130,22 @@ public class Simulation {
         Random rand = new Random();
         int counter = 0;
 
-//        while (!supportPQ.isEmpty()) {
-//            if () {
-//
-//            }
-//
-//            counter++;
-//        }
-
-
-        for (int i = 0; i < sessionsEnding; i++) {
-            if (!supportPQ.isEmpty()) {
+        while (!supportPQ.isEmpty()) {
+            while (supportPQ.peek() != null && supportPQ.peek().dur() == counter) {
                 SupportSession sesh = supportPQ.remove();
                 Tech tech = sesh.tech();
                 Customer cust = sesh.customer();
 
-                // Leaving in tech hashset since it is unordered, and same tech going back into queue...
+                // Leaving in tech hashset since it is unordered, and same tech goi
                 techQueue.remove(tech);
                 techQueue.add(tech);
-
                 custQueue.remove(cust);
                 custHash.remove(cust);
 
-                System.out.println("Call ended: " + sesh.toString());
+                System.out.println("Call ended: " + sesh);
 
                 int desiredCustCount = custHash.size() + 1;
+
                 while (desiredCustCount > custHash.size()) {
                     int custNum = rand.nextInt(custs.size());
                     if (!custHash.contains(custs.get(custNum))) {
@@ -173,8 +163,14 @@ public class Simulation {
 
             counter++;
         }
+
         System.out.println();
-        System.out.println("Time passed: " + counter + " minutes");
+        System.out.println("Total duration of simulation: " + (counter - 1) + " minutes");
+        System.out.println("Cust hash size: " + custHash.size());
+        System.out.println("Cust queue size: " + custQueue.size());
+        System.out.println("Tech hash size: " + techHash.size());
+        System.out.println("Tech queue size: " + techQueue.size());
+
     }
 
 }
