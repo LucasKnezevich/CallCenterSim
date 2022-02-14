@@ -11,47 +11,47 @@ public class Simulation {
     /**
      * Customers
      */
-    private final static ArrayList<Customer> custs = new ArrayList<>();
+    private ArrayList<Customer> custs;
 
     /**
      * Techs
      */
-    private final static ArrayList<Tech> techs = new ArrayList<>();
+    private ArrayList<Tech> techs;
 
     /**
      * Customers that have called
      */
-    private final static HashSet<Customer> custHash = new HashSet<>();
+    private HashSet<Customer> custHash;
 
     /**
      * Techs that are working
      */
-    private final static HashSet<Tech> techHash = new HashSet<>();
+    private HashSet<Tech> techHash;
 
     /**
      * Techs that are working
      */
-    private final static Queue<Tech> techQueue = new LinkedList<>();
+    private Queue<Tech> techQueue;
 
     /**
      * Customers that have called
      */
-    private final static Queue<Customer> custQueue = new LinkedList<>();
+    private Queue<Customer> custQueue;
 
     /**
      * Queue of support sessions.
      */
-    private final static PriorityQueue<SupportSession> supportPQ = new PriorityQueue<>();
+    private PriorityQueue<SupportSession> supportPQ;
 
 
     /**
-     *
+     * Main
      * @param args      The command line arguments.
      */
     public static void main(String[] args){
-        Simulation sim = new Simulation(30, 45, "techData_1.csv", "custData_1.csv",
+        Simulation sim = new Simulation(40, 70, "techData_1.csv", "custData_1.csv",
                 2, 42);
-        run(30);
+        sim.run(30);
     }
 
 
@@ -61,10 +61,20 @@ public class Simulation {
      * @param custCount         Number of customers that have called.
      * @param techFile          File containing tech data.  Should be a comma delimited file.
      * @param custFile          File containing cust data.  Should be a comma delimited file.
+     * @param minCallTime       Minimun length of a call in minutes
+     * @param maxCallTime       Maximum length of a call time in minutes
      */
     public Simulation(int techCount, int custCount, String techFile, String custFile, int minCallTime, int maxCallTime){
-
         Random rand = new Random();
+
+        techs = new ArrayList<>();
+        custs = new ArrayList<>();
+
+        techHash = new HashSet<>();
+        techQueue = new LinkedList<>();
+
+        custHash = new HashSet<>();
+        custQueue = new LinkedList<>();
 
         try {
             Scanner scan = new Scanner(new File(techFile));
@@ -114,8 +124,13 @@ public class Simulation {
             }
         }
 
+        supportPQ = new PriorityQueue<>();
         while (techQueue.size() > 0 && custQueue.size() > 0) {
-            SupportSession sesh = new SupportSession(techQueue.remove(), custQueue.remove(),
+            Tech tech = techQueue.remove();
+            Customer cust = custQueue.remove();
+            techHash.remove(tech);
+            custHash.remove(cust);
+            SupportSession sesh = new SupportSession(tech, cust,
                     rand.nextInt((maxCallTime + 1) - minCallTime) + minCallTime);
             supportPQ.add(sesh);
         }
@@ -126,21 +141,19 @@ public class Simulation {
      * Simulates support sessions ending.
      * @param sessionsEnding        The number of support sessions ending.
      */
-    public static void run(int sessionsEnding){
+    public void run(int sessionsEnding) {
         Random rand = new Random();
+        int clock = 0;
         int counter = 0;
 
-        while (!supportPQ.isEmpty()) {
-            while (supportPQ.peek() != null && supportPQ.peek().dur() == counter) {
+        while (!supportPQ.isEmpty() && counter < sessionsEnding) {
+            // Issue: Lets all calls for the minute finish once number of sessions ending is hit rather than halting once number is hit...
+            while (supportPQ.peek() != null && supportPQ.peek().callEndTime() == clock) {
+                counter++;
                 SupportSession sesh = supportPQ.remove();
                 Tech tech = sesh.tech();
-                Customer cust = sesh.customer();
-
-                // Leaving in tech hashset since it is unordered, and same tech goi
-                techQueue.remove(tech);
                 techQueue.add(tech);
-                custQueue.remove(cust);
-                custHash.remove(cust);
+                techHash.add(tech);
 
                 System.out.println("Call ended: " + sesh);
 
@@ -161,16 +174,12 @@ public class Simulation {
                 // Doesn't matter
             }
 
-            counter++;
+            clock++;
         }
 
         System.out.println();
-        System.out.println("Total duration of simulation: " + (counter - 1) + " minutes");
-        System.out.println("Cust hash size: " + custHash.size());
-        System.out.println("Cust queue size: " + custQueue.size());
-        System.out.println("Tech hash size: " + techHash.size());
-        System.out.println("Tech queue size: " + techQueue.size());
-
+        System.out.println("Simulation duration: " + (clock - 1) + " minutes");
+        System.out.println("Calls completed: " + counter);
     }
 
 }
